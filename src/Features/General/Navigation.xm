@@ -47,6 +47,14 @@ NSArray *filterSurfacesArray(NSArray *surfaces) {
     // Removes the surface from the main swipeable app collection view
     return %orig(filterSurfacesArray(surfaces), controller, haptics, set);
 }
+- (void)updateSurfaces:(NSArray *)surfaces {
+    // Newer Instagram versions refresh the swipeable surfaces after init, which brings hidden tabs back
+    for (id surface in surfaces) {
+        if (![surface isKindOfClass:%c(IGMainAppSurfaceIntent)]) return %orig;
+    }
+
+    %orig(filterSurfacesArray(surfaces));
+}
 %end
 
 %hook IGTabBarController

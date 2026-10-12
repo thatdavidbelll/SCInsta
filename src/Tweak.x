@@ -44,6 +44,7 @@ BOOL dmVisualMsgsViewedButtonEnabled = false;
         @"doom_scrolling_reel_count": @(1),
         @"hide_reels_tab": @(YES),
         @"no_suggested_reels": @(YES),
+        @"disable_scrolling_reels": @(YES),
         @"settings_shortcut": @(YES)
     };
     [[NSUserDefaults standardUserDefaults] registerDefaults:sciDefaults];
