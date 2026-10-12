@@ -9,7 +9,7 @@ on:
     workflow_dispatch:
         inputs:
             decrypted_instagram_url:
-                description: "The direct URL to the decrypted Instagram IPA"
+                description: "The direct URL to the decrypted Instagram IPA (or asset:<id> for a release asset of this repo)"
                 default: ""
                 required: true
                 type: string
@@ -90,13 +90,20 @@ jobs:
                 cd main
 
                 mkdir -p packages
-                wget "$Instagram_URL" --no-verbose -O packages/com.burbn.instagram.ipa
+
+                # "asset:<id>" reads the IPA from a (draft) release asset of this repo instead of a public URL
+                if [[ "$Instagram_URL" =~ ^asset:([0-9]+)$ ]]; then
+                  gh api -H "Accept: application/octet-stream" "repos/$GITHUB_REPOSITORY/releases/assets/${BASH_REMATCH[1]}" > packages/com.burbn.instagram.ipa
+                else
+                  wget "$Instagram_URL" --no-verbose -O packages/com.burbn.instagram.ipa
+                fi
 
                 ls -la packages
-                
+
               env:
                 THEOS: ${{ github.workspace }}/theos
                 Instagram_URL: ${{ inputs.decrypted_instagram_url }}
+                GH_TOKEN: ${{ github.token }}
 
             - name: Get SCInsta Version
               id: scinsta_version
